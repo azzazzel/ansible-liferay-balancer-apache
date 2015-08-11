@@ -1,0 +1,58 @@
+#
+# The host and port to bind the virtual host configuration to
+#
+balancer_host: "*"
+balancer_port: 80
+
+#
+# Virtual host name. By default empty so it matches any virtual host
+#
+#balancer_server_name: 
+
+#
+# List of visrtual host aliases
+#
+#balancer_server_aliases: []
+ 
+
+#
+# Ansible hosts group containing the application servers to proxy to.
+# In this group additional per host properties can be provided:
+# - ajp_port - the port on which AJP connection should be made (default is 8009) 
+# - loadfactor - the load balancing factor (default is 1) 
+# Example:
+# 192.168.121.12 ajp_port=8010 loadfactor=2
+#
+balancer_app_server_group: liferay
+
+#
+# Load balancing related apache modules to be loaded.
+#
+balancer_apache_modules: 
+- proxy
+- proxy_ajp
+- proxy_http
+- proxy_balancer
+- lbmethod_bybusyness
+- lbmethod_byrequests
+- lbmethod_bytraffic
+- lbmethod_heartbeat
+
+#
+# Load balancing method.
+#
+balancer_method: byrequests
+#balancer_method: bytraffic
+#balancer_method: bybusyness
+#balancer_method: heartbeat
+
+#
+# The name of the balancer virtual host configuration file
+#
+balancer_config_file_name: balancer
+
+#
+# The name of the default virtual host that comes with apache
+#
+balancer_apache_default_vhost: 000-default
+

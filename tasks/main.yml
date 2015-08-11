@@ -1,0 +1,42 @@
+---
+
+- name: Make sure Apache is installed
+  sudo: yes
+  apt: pkg={{item}} update_cache=yes state=installed
+  with_items:
+  - apache2
+
+- name: Make sure needed modules are present
+  sudo: yes
+  apache2_module: name={{ item }} state=present
+  with_items: "{{ balancer_apache_modules }}"
+  notify: 
+  - reload apache
+  
+- name: Make sure ballancer virtual host configuration file is up to date
+  sudo: yes
+  template:
+    src=vhost.conf.j2
+    dest=/etc/apache2/sites-available/{{ balancer_config_file_name }}.conf
+    mode=0644
+
+- name: Make sure balancer virtual host configuration is enabled
+  sudo: yes
+  command:
+    a2ensite {{ item }}.conf
+    creates=/etc/apache2/sites-enabled/{{ item }}.conf
+  with_items: 
+  - "{{ balancer_config_file_name }}"
+  notify: 
+  - reload apache
+    
+    
+- name: Make sure default virtual host configuration is disabled
+  sudo: yes
+  command:
+    a2dissite {{ item }}.conf
+    removes=/etc/apache2/sites-enabled/{{ item }}.conf
+  with_items: 
+  - "{{ balancer_apache_default_vhost }}"
+  notify: 
+  - reload apache

@@ -1,0 +1,7 @@
+[testApache]
+testApache ansible_ssh_host=192.168.121.121 ansible_ssh_port=22 ansible_ssh_user=vagrant
+
+[liferay]
+192.168.121.11 ajp_port=8009 loadfactor=1
+192.168.121.12 ajp_port=8010 loadfactor=2
+192.168.121.13 

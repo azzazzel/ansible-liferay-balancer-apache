@@ -1,0 +1,7 @@
+balancer_server_name: test
+
+balancer_server_aliases:
+ - alias1 
+ - alais2
+ 
+balancer_method: bybusyness

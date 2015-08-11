@@ -1,0 +1,32 @@
+
+# Virtual host configuration for load balancing
+
+<VirtualHost {{ balancer_host }}:{{ balancer_port }}>
+
+{% if balancer_server_name is defined and balancer_server_name %}
+  ServerName {{ balancer_server_name }}
+{% endif %}
+
+{% if balancer_server_aliases is defined %}
+ {% for ServerAlias in balancer_server_aliases %}
+  ServerAlias {{ ServerAlias }}
+ {% endfor %}
+{% endif %}
+
+  ErrorLog /var/log/apache2/{{ balancer_server_name | default('balancer') }}-error.log
+  CustomLog /var/log/apache2/{{ balancer_server_name | default('balancer') }}-access.log combined
+
+  <Proxy balancer://cluster>
+
+ {% for appServer in groups[balancer_app_server_group] %}
+	BalancerMember ajp://{{ hostvars[appServer]['inventory_hostname'] }}:{{ hostvars[appServer]['ajp_port'] | default('8009')}} loadfactor={{ hostvars[appServer]['loadfactor'] | default('1')}}
+ {% endfor %}
+ 
+   ProxySet lbmethod={{ balancer_method }}
+ 
+  </Proxy>
+  
+  ProxyPass / balancer://cluster/
+
+
+</VirtualHost>
